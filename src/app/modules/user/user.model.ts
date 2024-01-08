@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { AnyKeys, AnyObject, Schema, UpdateQuery, model } from 'mongoose';
 import { TUserModel, TUser, TUserFullName, TUserAddress } from './user.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
@@ -35,7 +35,7 @@ const userSchema = new Schema<TUser, TUserModel>(
   {
     statics: {
       isUser: async function (id: string) {
-        const existingUser = await this.findOne({ id });
+        const existingUser = await this.findOne({ userId: id });
         return existingUser;
       },
     },
@@ -58,6 +58,20 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.post('save', async function (doc, next) {
+  doc.password = '';
+  next();
+});
+
+userSchema.pre('updateOne', async function (next) {
+  const update: (AnyKeys<TUser> & AnyObject) | undefined = (this!.getUpdate() as UpdateQuery<TUser>)!.$set;
+
+  if (update?.password) {
+    update.password = await bcrypt.hash(update.password, Number(config.bcrypt_salt_rounds));
+  }
+  next();
+});
+
+userSchema.post('updateOne', async function (doc, next) {
   doc.password = '';
   next();
 });

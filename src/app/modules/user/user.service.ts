@@ -3,7 +3,7 @@ import { TUser } from './user.interface';
 
 const createUserIntoDB = async (user: TUser) => {
   if (await User.isUser(user.userId)) {
-    throw new Error('Student already exists!');
+    throw new Error('User already exists!');
   }
   const result = await User.create(user);
   return result;
@@ -19,7 +19,18 @@ const getSingleUserFromDB = async (id: number) => {
   return result;
 };
 
+const UpdateSingleUserFromDB = async (id: number, user: TUser) => {
+  if (!(await User.isUser(id))) {
+    throw new Error("Student doesn't exist!");
+  }
+  const result = await User.updateOne({ userId: id }, { $set: user });
+  return result;
+};
+
 const deleteUserFromDB = async (id: number) => {
+  if (!(await User.isUser(id))) {
+    throw new Error("Student doesn't exist!");
+  }
   const result = await User.deleteOne({ userId: id });
   return result;
 };
@@ -28,5 +39,6 @@ export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
   getSingleUserFromDB,
+  UpdateSingleUserFromDB,
   deleteUserFromDB,
 };
