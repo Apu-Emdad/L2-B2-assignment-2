@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const userNameSchema = z.object({
+const studentNameSchema = z.object({
   firstName: z
     .string()
     .min(1)
@@ -31,7 +31,7 @@ const localGuardianSchema = z.object({
 export const studentValidationSchema = z.object({
   id: z.string(),
   password: z.string().max(20),
-  name: userNameSchema,
+  name: studentNameSchema,
   gender: z.enum(['male', 'female', 'other']),
   dateOfBirth: z.string(),
   email: z.string().email(),

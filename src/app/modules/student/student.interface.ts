@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 
-export type TUserName = {
+export type TStudentName = {
   firstName: string;
   middleName?: string;
   lastName: string;
@@ -25,7 +25,7 @@ export type TLocalGuardian = {
 export type TStudent = {
   id: string;
   password: string;
-  name: TUserName;
+  name: TStudentName;
   gender: 'male' | 'female' | 'other';
   dateOfBirth?: string;
   email: string;
@@ -51,11 +51,11 @@ To create interface for both methods and statics
 */
 export interface StudentMethods {
   // eslint-disable-next-line no-unused-vars
-  userExists(id: string): Promise<TStudent | null>;
+  studentExists(id: string): Promise<TStudent | null>;
 }
 
 // For static we don't need separate type or interface. Simply typecast it into StudentModel
 export interface StudentModel extends Model<TStudent, Record<string, never>, StudentMethods> {
   // eslint-disable-next-line no-unused-vars
-  isUser(id: string): Promise<TStudent | null>;
+  isStudent(id: string): Promise<TStudent | null>;
 }

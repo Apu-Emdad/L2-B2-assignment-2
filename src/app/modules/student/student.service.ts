@@ -2,8 +2,8 @@ import { Student } from './student.model';
 import { TStudent } from './student.interface';
 
 const createStudentIntoDB = async (student: TStudent) => {
-  if (await Student.isUser(student.id)) {
-    throw new Error('User already exists!');
+  if (await Student.isStudent(student.id)) {
+    throw new Error('Student already exists!');
   }
   const result = await Student.create(student);
   return result;
@@ -15,10 +15,10 @@ const getAllStudentsFromDB = async () => {
 };
 
 const getSingleStudentFromDB = async (id: string) => {
-  //using static
-  // const result = await new Student().userExists(id);
-  // using method
-  // const result = await Student.isUser(id);
+  //using instance
+  // const result = await new Student().studentExists(id);
+  // using static
+  // const result = await Student.isStudent(id);
   //using built in static
   // const result = await Student.findOne({ id });
   const result = await Student.aggregate([{ $match: { id } }]);

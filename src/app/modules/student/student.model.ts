@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
-import { StudentModel, TGuardian, TLocalGuardian, TStudent, TUserName } from './student.interface';
+import { StudentModel, TGuardian, TLocalGuardian, TStudent, TStudentName } from './student.interface';
 import bcrypt from 'bcrypt';
 import config from '../../config';
 
-const userNameSchema = new Schema<TUserName>({
+const studentNameSchema = new Schema<TStudentName>({
   firstName: {
     type: String,
     trim: true,
@@ -85,7 +85,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       maxlength: [20, 'Password can not be more than 20 characters'],
     },
     name: {
-      type: userNameSchema,
+      type: studentNameSchema,
       required: [true, 'Name is required'],
     },
     gender: {
@@ -146,15 +146,15 @@ const studentSchema = new Schema<TStudent, StudentModel>(
   },
   {
     statics: {
-      isUser: async function (id: string) {
-        const existingUser = await this.findOne({ id });
-        return existingUser;
+      isStudent: async function (id: string) {
+        const existingStudent = await this.findOne({ id });
+        return existingStudent;
       },
     },
     methods: {
-      userExists: async function (id: string) {
-        const existingUser = await this.model('Student').findOne({ id });
-        return existingUser;
+      studentExists: async function (id: string) {
+        const existingStudent = await this.model('Student').findOne({ id });
+        return existingStudent;
       },
     },
     toJSON: {
@@ -166,13 +166,13 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 // pre save middleware/ hook : will work on create()  save()
 studentSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this; // doc
-  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds));
+  const student = this; // doc
+  student.password = await bcrypt.hash(student.password, Number(config.bcrypt_salt_rounds));
   next();
 });
 
 studentSchema.post('save', function async(doc, next) {
-  console.log('hashed password:', doc.password);
+  // console.log('hashed password:', doc.password);
   doc.password = '';
   next();
 });
