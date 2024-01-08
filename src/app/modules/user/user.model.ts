@@ -20,6 +20,21 @@ const userAddressSchema = new Schema<TUserAddress>(
   { _id: false },
 );
 
+const userOrderSchema = new Schema({
+  productName: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+});
+
 const userSchema = new Schema<TUser, TUserModel>(
   {
     userId: { type: Number, unique: true, required: true },
@@ -31,6 +46,7 @@ const userSchema = new Schema<TUser, TUserModel>(
     isActive: Boolean,
     hobbies: [String],
     address: userAddressSchema,
+    orders: { type: [userOrderSchema], default: [], required: false },
   },
   {
     statics: {

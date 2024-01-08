@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { UserServices } from './user.service';
-import { userValidationSchema } from './user.validation';
+import { userOrderValidationSchema, userValidationSchema } from './user.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
@@ -16,6 +16,7 @@ const createUser = async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     res.status(500).json({
+      err: err,
       success: false,
       message: err.message || 'Something went wrong',
       error: {
@@ -80,7 +81,7 @@ const updateSingleUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'User is retrieved successfully',
+      message: 'User is updated successfully',
       data: result,
     });
   } catch (err: any) {
@@ -117,4 +118,30 @@ const deleteUser = async (req: Request, res: Response) => {
     });
   }
 };
-export const UserControllers = { createUser, getAllUsers, getSingleUser, updateSingleUser, deleteUser };
+
+const createOrder = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.userId);
+    const orderData = req.body;
+    const zodParsedData = userOrderValidationSchema.parse(orderData);
+
+    const result = await UserServices.createOrderIntoUser(userId, zodParsedData);
+
+    res.status(200).json({
+      success: true,
+      message: 'Order created successfully',
+      data: result,
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong',
+      error: {
+        code: err.code || 500,
+        description: err.message,
+      },
+    });
+  }
+};
+
+export const UserControllers = { createUser, getAllUsers, getSingleUser, updateSingleUser, deleteUser, createOrder };
