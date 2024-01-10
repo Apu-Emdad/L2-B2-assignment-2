@@ -54,6 +54,33 @@ const userSchema = new Schema<TUser, TUserModel>(
         const existingUser = await this.findOne({ userId: id });
         return existingUser;
       },
+      getOrders: async function (id: number) {
+        const orders = await this.aggregate([
+          {
+            $match: { userId: id },
+          },
+          {
+            $project: { orders: 1, userId: 1 },
+          },
+          {
+            $unwind: '$orders',
+          },
+          {
+            $group: {
+              _id: '$_id',
+              userId: { $first: '$userId' },
+              orders: { $push: '$orders' },
+              count: { $sum: 1 },
+              totalPrice: {
+                $sum: {
+                  $multiply: ['$orders.price', '$orders.quantity'],
+                },
+              },
+            },
+          },
+        ]);
+        return orders[0];
+      },
     },
     methods: {
       userExists: async function (id: string) {

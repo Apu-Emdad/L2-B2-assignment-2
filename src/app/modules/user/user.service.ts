@@ -43,6 +43,18 @@ const createOrderIntoUser = async (id: number, order: TUserOrder) => {
   return result;
 };
 
+const getOrdersFromUser = async (id: number) => {
+  const isUser = await User.isUser(id);
+  if (!isUser) {
+    throw new Error("User doesn't exist!");
+  }
+  if (isUser.orders?.length === 0) {
+    throw new Error('The user have no orders');
+  }
+  const result = await User.getOrders(id);
+
+  return result;
+};
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
@@ -50,4 +62,5 @@ export const UserServices = {
   UpdateSingleUserFromDB,
   deleteUserFromDB,
   createOrderIntoUser,
+  getOrdersFromUser,
 };

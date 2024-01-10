@@ -104,7 +104,7 @@ const deleteUser = async (req: Request, res: Response) => {
 
     res.status(200).json({
       success: true,
-      message: 'User is deleted succesfully',
+      message: 'User is deleted successfully',
       data: result,
     });
   } catch (err: any) {
@@ -144,4 +144,63 @@ const createOrder = async (req: Request, res: Response) => {
   }
 };
 
-export const UserControllers = { createUser, getAllUsers, getSingleUser, updateSingleUser, deleteUser, createOrder };
+const getOrders = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.userId);
+
+    const result = await UserServices.getOrdersFromUser(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Order fetched successfully!',
+      data: {
+        orders: result,
+      },
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong',
+      error: {
+        code: err.code || 500,
+        description: err.message,
+      },
+    });
+  }
+};
+
+const getTotalPrice = async (req: Request, res: Response) => {
+  try {
+    const userId = Number(req.params.userId);
+
+    const result = await UserServices.getOrdersFromUser(userId);
+
+    res.status(200).json({
+      success: true,
+      message: 'Order fetched successfully!',
+      data: {
+        totalPrice: result.totalPrice,
+      },
+    });
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'Something went wrong',
+      error: {
+        code: err.code || 500,
+        description: err.message,
+      },
+    });
+  }
+};
+
+export const UserControllers = {
+  createUser,
+  getAllUsers,
+  getSingleUser,
+  updateSingleUser,
+  deleteUser,
+  createOrder,
+  getOrders,
+  getTotalPrice,
+};
